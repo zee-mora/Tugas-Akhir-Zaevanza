@@ -29,22 +29,20 @@ const postCategory = async (req, res) => {
         console.error('Error in postCategory:', err); // Log the error details
         res.status(500).json({ message: 'Server error' });
     }
-};
+};  
 
 const deleteCategory = async (req, res) => {
-    const { name } = req.body;
-
     try {
-        const category = await Category.findOneAndDelete({ name });
+        const category = await Category.findById(req.params.id);
         if (!category) {
             return res.status(404).json({ message: 'Category not found' });
         }
-        res.status(200).json({ message: 'Category deleted successfully' });
-    } catch (err) {
-        console.error('Error in deleteCategory:', err); // Log the error details
-        res.status(500).json({ message: 'Server error' });
+        await category.deleteOne();
+        res.json({ message: 'Category deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-};
+}
 
 const updateCategory = async (req, res) => {
     try {

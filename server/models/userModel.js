@@ -12,7 +12,9 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: function() {
+            return this.isNew;
+        }
     },
     role: {
         type: String,
@@ -21,7 +23,11 @@ const userSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false,
-    }
+    },
+    profilePicture: {
+        type: String,
+        default: '',
+    },
 }, {
     timestamps: true,
 });

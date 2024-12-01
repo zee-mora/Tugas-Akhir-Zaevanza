@@ -33,7 +33,7 @@ router.put('/users/:id', async (req, res) => {
 router.delete('/users/:id', async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
-        await user.remove();
+        await user.deleteOne();
         res.json({ message: 'User deleted' });
     } catch (error) {
         console.error(error);
@@ -45,7 +45,7 @@ router.delete('/users/:id', async (req, res) => {
 //get total user
 router.get('/users/count', async (req, res) => {
     try {
-        const total = await User.countDocuments();
+        const total = await User.countDocuments({ isAdmin: false });
         res.json({count: total});
     } catch (error) {
         console.error(error);

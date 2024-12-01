@@ -11,6 +11,7 @@ const Book = require('./routes/adminRoutes/uploadBook')
 const Category = require('./routes/adminRoutes/uploadCategory')
 const Cart = require('./routes/cartRoute')
 const path = require('path');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 require('dotenv').config();
 // const debug = require('./routes/debugging/cartDebug');
 
@@ -27,8 +28,14 @@ app.use('/api', Author);
 app.use('/api', User);
 app.use('/api', userRoutes);
 app.use('/api', authRoutes);
+app.use('/api', feedbackRoutes);
 app.use('/api', UserTransaction);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads/profile')));
+
+app.get('/', (req, res) => {
+    res.send('welcome to API');
+})
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);

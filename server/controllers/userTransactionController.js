@@ -1,5 +1,17 @@
 const Transaction = require('../models/transactionModel');
 const User = require('../models/userModel');
+// const midtransClient = require('midtrans-client')
+
+const getUserTransactionsById = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const transactions = await Transaction.find({ userId }).populate('items.bookId', 'title author price');
+        res.json(transactions);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
 
 // Get all transactions (Admin or specific user)
 const getUserTransactions = async (req, res) => {
@@ -70,12 +82,12 @@ const deleteUserTransaction = async (req, res) => {
         if (!transaction) {
             return res.status(404).json({ message: 'Transaction not found' });
         }
-
-        await transaction.remove();
+        await transaction.deleteOne();
         res.json({ message: 'Transaction deleted successfully' });
     } catch (error) {
         console.error('Error deleting transaction:', error.message);
         res.status(500).json({ message: 'Internal server error' });
+        
     }
 };
 
@@ -114,10 +126,67 @@ const getUserTransactionCount = async (req, res) => {
     }
 }
 
+const sendToEmailUser = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error sending email:', error.message);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+const getTotalrevenue = async (req, res) => {
+    try {
+        const total = await Transaction.aggregate({
+            $group: {
+                _id: null,
+                total: { $sum: '$totalAmount' }
+            }
+        })
+       
+        res.status(200).json({ total: total[0]?.total || 0 });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+const getTransactionByUserId = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const transactions = await Transaction.find({ userId });
+        userId.populate('items.bookId', 'title author price');
+        res.json(transactions);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+const getTotalCount = async (req, res) => {
+    try {
+        const total = await Transaction.countDocuments();
+        res.json({ count: total });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+
 module.exports = {
+    getTotalCount,
+    getTransactionByUserId,
     getUserTransactions,
     postUserTransaction,
     deleteUserTransaction,
     updateUserTransaction,
     getUserTransactionCount,
+    sendToEmailUser,
+    getTotalrevenue,
+    getUserTransactionsById
 };
