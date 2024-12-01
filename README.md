@@ -1,3 +1,9 @@
-# Tugas-Akhir
+# Tugas-Akhir-Zaevanza
 
-# wajib install npm di folder root, client, server
+Tugas Akhir dari siswa SKARIGA bernama Zaevanza Satria P, menggunakan MERN STACK.
+
+### Petunjuk Instalasi
+1. Wajib install `npm` di folder:
+   - Root
+   - Client
+   - Server
